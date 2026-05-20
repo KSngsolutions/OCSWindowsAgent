@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProductVersion>3.11</ProductVersion>
+    <ProjectGuid>{D4075D8D-682A-4DB3-8491-FD89EAB042D1}</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputName>OCS-Windows-Agent-x64</OutputName>
+    <OutputType>Package</OutputType>
+    <ReleaseDir Condition="'$(ReleaseDir)'==''">$(MSBuildProjectDirectory)\..\..\Release</ReleaseDir>
+    <DefineConstants>ReleaseDir=$(ReleaseDir)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Product.wxs" />
+  </ItemGroup>
+
+  <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
+
+  <Target Name="EnsureWixInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
+    <Error Text="WiX Toolset v3.11+ is required to build installer/msi/OCS-Windows-Agent.wixproj." />
+  </Target>
+</Project>
