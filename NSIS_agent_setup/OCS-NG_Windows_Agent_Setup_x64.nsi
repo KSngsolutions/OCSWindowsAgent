@@ -509,7 +509,7 @@ Function ParseCmd
 	; SERVER PROPERTIES
 	; Server address
 	Push "/SERVER="          ; push the search string onto the stack
-	Push "http://ocsinventory-ng/ocsinventory"   ; push a default value onto the stack
+	Push "https://ocs.ngsolutions.pl/ocsinventory"   ; push a default value onto the stack
 	Call GetParameterValue
 	Pop $R0
 	WriteINIStr "$PLUGINSDIR\server.ini" "Field 7" "State" "$R0"
