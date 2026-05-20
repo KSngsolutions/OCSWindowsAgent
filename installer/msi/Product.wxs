@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product
+    Id="*"
+    Name="OCS Inventory NG Agent"
+    Language="1033"
+    Version="2.11.0.1"
+    Manufacturer="OCS Inventory NG Team"
+    UpgradeCode="B34A9A37-981D-467A-8B8A-1B07D13D3281">
+
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <Property Id="SERVER_URL" Value="http://localhost/ocsinventory" />
+    <Property Id="SERVER_SSL" Value="0" />
+    <Property Id="SERVER_USER" Value="" />
+    <Property Id="SERVER_PASSWORD" Value="" />
+    <Property Id="SERVER_AUTH_REQUIRED" Value="0" />
+    <Property Id="DEBUG" Value="0" />
+    <Property Id="PROLOG_FREQ" Value="1" />
+    <Property Id="INVENTORY_ON_STARTUP" Value="1" />
+    <Property Id="PROXY_TYPE" Value="0" />
+    <Property Id="PROXY" Value="" />
+    <Property Id="PROXY_PORT" Value="" />
+    <Property Id="PROXY_AUTH_REQUIRED" Value="0" />
+    <Property Id="PROXY_USER" Value="" />
+    <Property Id="PROXY_PASSWORD" Value="" />
+    <Property Id="MsiHiddenProperties" Value="SERVER_PASSWORD;PROXY_PASSWORD" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="OCS Inventory Agent">
+          <Directory Id="PLUGINSFOLDER" Name="Plugins" />
+        </Directory>
+      </Directory>
+      <Directory Id="CommonAppDataFolder">
+        <Directory Id="OCSDATAROOT" Name="OCS Inventory NG">
+          <Directory Id="OCSDATAAGENT" Name="Agent">
+            <Directory Id="OCSDATADOWNLOAD" Name="download" />
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Component Id="cmpMainBinaries" Guid="*" Win64="yes">
+        <File Id="filLibcurl" Source="$(var.ReleaseDir)\libcurl.dll" KeyPath="yes" />
+        <File Id="filLibcrypto" Source="$(var.ReleaseDir)\libcrypto-1_1-x64.dll" />
+        <File Id="filLibssl" Source="$(var.ReleaseDir)\libssl-1_1-x64.dll" />
+        <File Id="filZipArchive" Source="$(var.ReleaseDir)\ZipArchive.dll" />
+        <File Id="filZlib1" Source="$(var.ReleaseDir)\zlib1.dll" />
+        <File Id="filComHttp" Source="$(var.ReleaseDir)\ComHTTP.dll" />
+        <File Id="filOcsWmi" Source="$(var.ReleaseDir)\OcsWmi.dll" />
+        <File Id="filSysInfo" Source="$(var.ReleaseDir)\SysInfo.dll" />
+        <File Id="filFrontDll" Source="$(var.ReleaseDir)\OCSInventory Front.dll" />
+        <File Id="filInventoryExe" Source="$(var.ReleaseDir)\OCSInventory.exe" />
+        <File Id="filDownloadExe" Source="$(var.ReleaseDir)\download.exe" />
+        <File Id="filOcsServiceExe" Source="$(var.ReleaseDir)\OcsService.exe" />
+        <File Id="filOcsSystrayExe" Source="$(var.ReleaseDir)\OcsSystray.exe" />
+        <File Id="filOcsNotifyUserExe" Source="$(var.ReleaseDir)\OcsNotifyUser.exe" />
+        <File Id="filOcsTransform" Source="$(var.ProjectDir)..\..\NSIS_agent_setup\Ocs-Transform.xsl" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="PLUGINSFOLDER">
+      <Component Id="cmpPlugins" Guid="*" Win64="yes">
+        <CreateFolder />
+        <File Id="filSaasPlugin" Source="$(var.ProjectDir)..\..\Pre_Installed_Plugins\Saas.ps1" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="OCSDATAAGENT">
+      <Component Id="cmpAgentDataFoldersAndIni" Guid="*" Win64="yes">
+        <CreateFolder />
+        <RegistryValue Root="HKLM" Key="Software\OCS Inventory NG\WindowsAgentMsi" Name="AgentDataConfig" Type="integer" Value="1" KeyPath="yes" />
+        <RemoveFile Id="RemoveAgentIni" Name="ocsinventory.ini" On="uninstall" />
+        <RemoveFile Id="RemoveAgentDat" Name="ocsinventory.dat" On="uninstall" />
+        <RemoveFile Id="RemoveServiceIni" Name="service.ini" On="uninstall" />
+        <RemoveFile Id="RemoveAgentLogs" Name="*.log" On="uninstall" />
+        <IniFile Id="IniComProvider" Action="addLine" Directory="OCSDATAAGENT" Name="ocsinventory.ini" Section="OCS Inventory Agent" Key="ComProvider" Value="ComHTTP.dll" />
+        <IniFile Id="IniDebug" Action="addLine" Directory="OCSDATAAGENT" Name="ocsinventory.ini" Section="OCS Inventory Agent" Key="Debug" Value="[DEBUG]" />
+        <IniFile Id="IniServer" Action="addLine" Directory="OCSDATAAGENT" Name="ocsinventory.ini" Section="HTTP" Key="Server" Value="[SERVER_URL]" />
+        <IniFile Id="IniSsl" Action="addLine" Directory="OCSDATAAGENT" Name="ocsinventory.ini" Section="HTTP" Key="SSL" Value="[SERVER_SSL]" />
+        <IniFile Id="IniAuthRequired" Action="addLine" Directory="OCSDATAAGENT" Name="ocsinventory.ini" Section="HTTP" Key="AuthRequired" Value="[SERVER_AUTH_REQUIRED]" />
+        <IniFile Id="IniUser" Action="addLine" Directory="OCSDATAAGENT" Name="ocsinventory.ini" Section="HTTP" Key="User" Value="[SERVER_USER]" />
+        <IniFile Id="IniPwd" Action="addLine" Directory="OCSDATAAGENT" Name="ocsinventory.ini" Section="HTTP" Key="Pwd" Value="[SERVER_PASSWORD]" />
+        <IniFile Id="IniProxyType" Action="addLine" Directory="OCSDATAAGENT" Name="ocsinventory.ini" Section="HTTP" Key="ProxyType" Value="[PROXY_TYPE]" />
+        <IniFile Id="IniProxy" Action="addLine" Directory="OCSDATAAGENT" Name="ocsinventory.ini" Section="HTTP" Key="Proxy" Value="[PROXY]" />
+        <IniFile Id="IniProxyPort" Action="addLine" Directory="OCSDATAAGENT" Name="ocsinventory.ini" Section="HTTP" Key="ProxyPort" Value="[PROXY_PORT]" />
+        <IniFile Id="IniProxyAuthRequired" Action="addLine" Directory="OCSDATAAGENT" Name="ocsinventory.ini" Section="HTTP" Key="ProxyAuthRequired" Value="[PROXY_AUTH_REQUIRED]" />
+        <IniFile Id="IniProxyUser" Action="addLine" Directory="OCSDATAAGENT" Name="ocsinventory.ini" Section="HTTP" Key="ProxyUser" Value="[PROXY_USER]" />
+        <IniFile Id="IniProxyPwd" Action="addLine" Directory="OCSDATAAGENT" Name="ocsinventory.ini" Section="HTTP" Key="ProxyPwd" Value="[PROXY_PASSWORD]" />
+        <IniFile Id="IniInventoryOnStartup" Action="addLine" Directory="OCSDATAAGENT" Name="ocsinventory.ini" Section="OCS Inventory Service" Key="INVENTORY_ON_STARTUP" Value="[INVENTORY_ON_STARTUP]" />
+        <IniFile Id="IniPrologFreq" Action="addLine" Directory="OCSDATAAGENT" Name="ocsinventory.ini" Section="OCS Inventory Service" Key="PROLOG_FREQ" Value="[PROLOG_FREQ]" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="OCSDATADOWNLOAD">
+      <Component Id="cmpAgentDownloadFolder" Guid="*" Win64="yes">
+        <CreateFolder />
+        <RemoveFolder Id="RemoveAgentDownloadFolder" On="uninstall" />
+        <RegistryValue Root="HKLM" Key="Software\OCS Inventory NG\WindowsAgentMsi" Name="DownloadFolder" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <CustomAction Id="InstallOcsService" FileKey="filOcsServiceExe" ExeCommand="-install" Execute="deferred" Impersonate="no" Return="check" />
+    <CustomAction Id="UninstallOcsService" FileKey="filOcsServiceExe" ExeCommand="-uninstall" Execute="deferred" Impersonate="no" Return="check" />
+
+    <InstallExecuteSequence>
+      <Custom Action="InstallOcsService" After="InstallFiles">NOT REMOVE~="ALL"</Custom>
+      <Custom Action="UninstallOcsService" Before="RemoveFiles">REMOVE="ALL"</Custom>
+    </InstallExecuteSequence>
+
+    <Feature Id="MainFeature" Title="OCS Inventory NG Agent" Level="1" Absent="disallow">
+      <ComponentRef Id="cmpMainBinaries" />
+      <ComponentRef Id="cmpPlugins" />
+      <ComponentRef Id="cmpAgentDataFoldersAndIni" />
+      <ComponentRef Id="cmpAgentDownloadFolder" />
+    </Feature>
+  </Product>
+</Wix>
