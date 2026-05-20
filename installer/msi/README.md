@@ -79,4 +79,6 @@ msiexec /x OCS-Windows-Agent-x64.msi /qn /l*v C:\Windows\Temp\OCSAgentUninstall.
 ## Notes
 
 - The MSI intentionally uses `OcsService.exe -install` / `-uninstall` rather than pure WiX `ServiceInstall` to preserve existing service registration behavior implemented by the project.
+- Service registration/unregistration custom actions are configured with blocking (`Return="check"`) behavior so deployment fails fast if service operations fail.
+- Uninstall removes `C:\ProgramData\OCS Inventory NG\Agent\ocsinventory.ini` and agent `*.log` files for a clean removal workflow.
 - The existing NSIS installer flow is unchanged.
