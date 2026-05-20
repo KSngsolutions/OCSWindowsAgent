@@ -108,7 +108,7 @@
     <CustomAction Id="UninstallOcsService" FileKey="filOcsServiceExe" ExeCommand="-uninstall" Execute="deferred" Impersonate="no" Return="check" />
 
     <InstallExecuteSequence>
-      <Custom Action="InstallOcsService" After="InstallFiles">NOT REMOVE~="ALL"</Custom>
+      <Custom Action="InstallOcsService" After="InstallFiles">NOT REMOVE="ALL"</Custom>
       <Custom Action="UninstallOcsService" Before="RemoveFiles">REMOVE="ALL"</Custom>
     </InstallExecuteSequence>
 
