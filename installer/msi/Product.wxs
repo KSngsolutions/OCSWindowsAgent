@@ -105,9 +105,11 @@
     </DirectoryRef>
 
     <CustomAction Id="InstallOcsService" FileKey="filOcsServiceExe" ExeCommand="-install" Execute="deferred" Impersonate="no" Return="check" />
+    <CustomAction Id="RollbackInstallOcsService" FileKey="filOcsServiceExe" ExeCommand="-uninstall" Execute="rollback" Impersonate="no" Return="ignore" />
     <CustomAction Id="UninstallOcsService" FileKey="filOcsServiceExe" ExeCommand="-uninstall" Execute="deferred" Impersonate="no" Return="check" />
 
     <InstallExecuteSequence>
+      <Custom Action="RollbackInstallOcsService" Before="InstallOcsService">NOT REMOVE="ALL"</Custom>
       <Custom Action="InstallOcsService" After="InstallFiles">NOT REMOVE="ALL"</Custom>
       <Custom Action="UninstallOcsService" Before="RemoveFiles">REMOVE="ALL"</Custom>
     </InstallExecuteSequence>
